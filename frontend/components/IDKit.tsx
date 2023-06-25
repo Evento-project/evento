@@ -1,32 +1,68 @@
-import { useCallback } from "react";
-import { IDKitWidget } from "@worldcoin/idkit";
-import type { ISuccessResult } from "@worldcoin/idkit";
+import { ReactNode, useCallback, useState } from "react";
+import dynamic from "next/dynamic";
+import { ISuccessResult, useIDKit } from "@worldcoin/idkit";
+import { Button } from "@chakra-ui/react";
+const IDKitWidget = dynamic(() => import('@worldcoin/idkit').then(mod => mod.IDKitWidget), { ssr: false })
 
-export function IDKit() {
-	const handleProof = useCallback((result: ISuccessResult) => {
-		return new Promise<void>((resolve) => {
-			setTimeout(() => resolve(), 3000);
-			// NOTE: Example of how to decline the verification request and show an error message to the user
-		});
-	}, []);
+export default function IDKit({ 
+	title,
+	disabled = false,
+	loading = false,
+	next,
+} : { 
+	title: string,
+	disabled?: boolean,
+	loading?: boolean,
+	next: () => void,
+}) {
+
+	const [success, setSuccess] = useState(false)
+	const [opened, setOpened] = useState(false)
 
 	const onSuccess = (result: ISuccessResult) => {
-		console.log(result);
+		setSuccess(true);
+		next();
 	};
 
-	return (
-			<div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+	const { open, setOpen } = useIDKit({ onSuccess })
+
+	return (<>
 				<IDKitWidget
 					action="my_action"
 					signal="my_signal"
+					walletConnectProjectId="a6513ebfdf8545aeb9134f5753ab2ef1"
+					autoClose
 					onSuccess={onSuccess}
-					handleVerify={handleProof}
 					app_id="app_e1699974cc7199c662b6543b93b624f8"
+				/>
+				{!open && !opened && <Button 
+					bg="gray.900"
+					color="gray.100"
+					_hover={{
+						bg: "gray.700",
+					}}
+					disabled={disabled} 
+					isLoading={loading}
+					width="full"
+					py={6}
+					onClick={() => { 
+						setOpened(true)
+						setOpen(true) 
+					}}
 				>
-					{({ open }) => <button onClick={open}>Click me</button>}
-				</IDKitWidget>
-			</div>
+					{ title }
+				</Button>}
+				{!open && opened && !success && (
+					<Button 
+						disabled={disabled}
+						isLoading={loading}
+						onClick={() => { next() }}
+						width="full"
+						py={6}
+					>
+						Continue without verified as a human
+					</Button>
+				)}
+			</>
 	);
 }
-
-export default IDKit

@@ -91,7 +91,7 @@ export function EventCard({event} : {event: BriteEvent}) {
             { event.description }
           </chakra.p>
 
-          { showForm && <CreateLock />}
+          { showForm && <CreateLock event={event} />}
 
           {!showForm && <Box mt={8}>
             <Button

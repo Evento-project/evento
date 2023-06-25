@@ -27,7 +27,6 @@ import {
 import { Layout } from '../components/layout/Layout'
 import CreateLock from '../components/CreateLock'
 import { EventCard} from '../components/EventCard'
-import { IDKit} from '../components/IDKit'
 import { useCheckLocalChain } from '../hooks/useCheckLocalChain'
 import { useIsMounted } from '../hooks/useIsMounted'
 import useEvents from '../hooks/useEvents'
@@ -87,7 +86,6 @@ const Events: NextPage = () => {
             { testEvent.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
           </div>
         )}
-        <IDKit />
     </Layout>
   )
 }

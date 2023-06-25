@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers'
 import { UnlockV11, PublicLockV11 } from "@unlock-protocol/contracts";
 import { 
+  Alert,
+  AlertIcon,
   Box,
   Button, 
   chakra,
@@ -9,7 +11,6 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-
 import {
   erc20ABI,
   useAccount,
@@ -18,15 +19,17 @@ import {
   useContractRead,
   usePrepareContractWrite
 } from 'wagmi'
+import { BriteEvent } from '../types/eventbrite';
+import IDKit from './IDKit';
 
 const lockInterface = new ethers.utils.Interface(PublicLockV11.abi)
 
 
-export default function CreateLock() {
+export default function CreateLock({event} : {event: BriteEvent}) {
   const { address: creator, isConnected } = useAccount()
 
   const [calldata, setCalldata] = useState('')
-  const [name, setName] = useState('')
+  const [name, setName] = useState(event.name)
   const [price, setPrice] = useState('1')
   const [duration, setDuration] = useState('30') // in days
   const [supply, setSupply] = useState('10000')
@@ -48,7 +51,7 @@ export default function CreateLock() {
           creator,
           parseInt(duration) * 60 * 60 * 24, // duration is in days!
           currency || ethers.constants.AddressZero,
-          ethers.utils.parseUnits(price.toString(), decimals || 18),
+          ethers.utils.parseUnits(price, decimals || 18),
           supply,
           name,
         ]
@@ -71,13 +74,7 @@ export default function CreateLock() {
   })
 
   return (
-    <chakra.form
-      className='w-1/2'
-      onSubmit={async (e) => {
-        e.preventDefault()
-        sendTransaction?.()
-      }}
-    >
+    <chakra.form>
 
       <Text 
         as='b' 
@@ -119,26 +116,28 @@ export default function CreateLock() {
         onChange={setPrice}
         type='number'
       />
-
       <Box mt={8} textAlign="center">
-        <Button 
-          bg="gray.900"
-          color="gray.100"
-          _hover={{
-            bg: "gray.700",
-          }}
-          type="submit" 
-          disabled={isLoading || !sendTransaction} 
-          width="240px"
-          onClick={() => { sendTransaction!() }}
-        >
-          Deploy
-        </Button>
+        <IDKit 
+          title='Deploy' 
+          disabled={!Boolean(sendTransaction)}
+          loading={isLoading}
+          next={() => { sendTransaction!()}}
+        />
       </Box>
 
       {(isError || isSuccess) && (
-        <Box mt={2} textAlign="center">
-          { isError ? 'Transaction error!' : `Success! Lock Deployed at ${receipt?.logs[0].address}`}
+        <Box mt={4} textAlign="center">
+          { isError ? (
+            <Alert status='error' rounded={8}>
+              <AlertIcon />
+              Transaction Error! { transaction?.hash }
+            </Alert>
+          ) : (
+            <Alert status='success' rounded={8}>
+              <AlertIcon />
+              Success! Lock Deployed at {receipt?.logs[0].address}
+            </Alert>
+          )}
         </Box>
       )}
 
