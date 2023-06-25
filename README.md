@@ -22,3 +22,9 @@ This project is a simple widget-like presence that links offline events and cryp
 
 # How it is made
 Evy uses Unlock Protocol and WorldID's human verification technology, as well as Eventbrite's developer API for its rich event information. By calling the Eventbrite OAuth login authorization, it retrieves a list of events that you created, and customizes a set of Unlock Protocol smart contracts that can be uploaded to the Polygon blockchain within two minutes based on the description of your event. A crypto payment link is generated and returned to be updated in your event information. If a human verification is required, WorldID's human verification technology verifies your iris and you can easily confirm this in the World app on your phone. The rich Unlock protocol and convenient checkout link plus the speed of Polygon fulfilled the experience. WorldId provided a level of security on top of that too.  
+
+# By
+
+@harryhong
+ins: giza_hong
+Discord: Gizahong
