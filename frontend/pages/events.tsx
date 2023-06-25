@@ -1,47 +1,28 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Code,
-  chakra,
+  Box,
   Heading,
-  Link,
+  SkeletonCircle,
+  SkeletonText,
   Text,
-  Button,
 } from '@chakra-ui/react'
 import type { NextPage } from 'next'
-import NextLink from 'next/link'
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import * as Unlock from '../services/unlock/unlock'
 
 import {
   useAccount,
-  useContractWrite,
-  useContractRead,
-  usePrepareContractWrite,
-  useProvider,
-  useWaitForTransaction,
 } from 'wagmi'
 import { Layout } from '../components/layout/Layout'
-import CreateLock from '../components/CreateLock'
 import { EventCard} from '../components/EventCard'
-import { useCheckLocalChain } from '../hooks/useCheckLocalChain'
 import { useIsMounted } from '../hooks/useIsMounted'
 import useEvents from '../hooks/useEvents'
 import { BriteEvent } from '../types/eventbrite'
 
-const GOERLI_CONTRACT_ADDRESS = 123123123;
-
 const Events: NextPage = () => {
   const router = useRouter()
   const token = router.asPath.split('access_token=')[1];
-  const { data, loading } = useEvents(token)
+  const { data, loading, error } = useEvents("DDD")
 
-  const { address, isConnected } = useAccount()
-
-  const { isLocalChain } = useCheckLocalChain()
+  const { isConnected } = useAccount()
 
   const { isMounted } = useIsMounted()
 
@@ -76,12 +57,21 @@ const Events: NextPage = () => {
   return (
     <Layout>
       <Heading as="h1" mb="8" />
-        { data && (
+        {loading && (
+          <Box padding='6' boxShadow='lg' bg='white'>
+            <SkeletonCircle size='10' />
+            <SkeletonText mt='4' noOfLines={4} spacing='4' skeletonHeight='2' />
+          </Box>
+        )}
+        {(data && data.length == 0 && !loading) && (
+          <div>You do not have any events</div>
+        )}
+        { data && data.length > 0 && (
           <div className='events'>
             { data.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
           </div>
         )}
-        { !data && (
+        { Boolean(error) && !loading && (
           <div className='events'>
             { testEvent.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
           </div>

@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useState } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { ISuccessResult, useIDKit } from "@worldcoin/idkit";
-import { Button } from "@chakra-ui/react";
+import ActionButton from "./ActionButton";
 const IDKitWidget = dynamic(() => import('@worldcoin/idkit').then(mod => mod.IDKitWidget), { ssr: false })
 
 export default function IDKit({ 
@@ -35,33 +35,26 @@ export default function IDKit({
 					onSuccess={onSuccess}
 					app_id="app_e1699974cc7199c662b6543b93b624f8"
 				/>
-				{!open && !opened && <Button 
-					bg="gray.900"
-					color="gray.100"
-					_hover={{
-						bg: "gray.700",
-					}}
-					disabled={disabled} 
-					isLoading={loading}
-					width="full"
-					py={6}
-					onClick={() => { 
-						setOpened(true)
-						setOpen(true) 
-					}}
-				>
-					{ title }
-				</Button>}
+				{!open && !opened && (
+					<ActionButton 
+						title={title}
+						disabled={disabled} 
+						loading={loading}
+						onClick={() => { 
+							setOpened(true)
+							setOpen(true) 
+						}}
+					/>
+				)}
 				{!open && opened && !success && (
-					<Button 
-						disabled={disabled}
-						isLoading={loading}
-						onClick={() => { next() }}
-						width="full"
-						py={6}
-					>
-						Continue without verified as a human
-					</Button>
+					<ActionButton 
+						title="Continue without verified as a human"
+						disabled={disabled} 
+						loading={loading}
+						onClick={() => { 
+							next()
+						}}
+					/>
 				)}
 			</>
 	);

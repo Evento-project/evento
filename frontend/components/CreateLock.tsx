@@ -7,6 +7,7 @@ import {
   Box,
   Button, 
   chakra,
+  Checkbox,
   Flex,
   Input,
   Text,
@@ -21,6 +22,7 @@ import {
 } from 'wagmi'
 import { BriteEvent } from '../types/eventbrite';
 import IDKit from './IDKit';
+import ActionButton from './ActionButton';
 
 const lockInterface = new ethers.utils.Interface(PublicLockV11.abi)
 
@@ -29,6 +31,7 @@ export default function CreateLock({event} : {event: BriteEvent}) {
   const { address: creator, isConnected } = useAccount()
 
   const [calldata, setCalldata] = useState('')
+  const [humanOnly, setHumanOnly] = useState(false)
   const [name, setName] = useState(event.name)
   const [price, setPrice] = useState('1')
   const [duration, setDuration] = useState('30') // in days
@@ -116,13 +119,29 @@ export default function CreateLock({event} : {event: BriteEvent}) {
         onChange={setPrice}
         type='number'
       />
+
+      <Checkbox
+        checked={humanOnly}
+        onChange={(e) => setHumanOnly(e.target.checked)}
+      >
+        Human only
+      </Checkbox>
+
+
       <Box mt={8} textAlign="center">
-        <IDKit 
+        {humanOnly ? (<IDKit 
           title='Deploy' 
           disabled={!Boolean(sendTransaction)}
           loading={isLoading}
           next={() => { sendTransaction!()}}
-        />
+        />) : (
+          <ActionButton 
+            title='Deploy'
+            onClick={() => { sendTransaction!()}}
+            disabled={!Boolean(sendTransaction)}
+            loading={isLoading}
+          />
+        )}
       </Box>
 
       {(isError || isSuccess) && (

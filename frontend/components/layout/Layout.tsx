@@ -28,11 +28,6 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
                   Evy
                 </Link>
               </NextLink>
-              <NextLink href="/token-gated" passHref legacyBehavior>
-                <Link px="4" py="1" fontWeight="bold" >
-                  Token Gated
-                </Link>
-              </NextLink>
               <NextLink href="/events" passHref legacyBehavior>
                 <Link px="4" py="1" fontWeight="bold" >
                   Events
