@@ -22,7 +22,7 @@ import useLocalStorage from '../hooks/useLocalStorage'
 const Events: NextPage = () => {
   const router = useRouter()
   const token = router.asPath.split('access_token=')[1];
-  const { data, loading, error } = useEvents('DDD')
+  const { data, loading, error } = useEvents(token)
 
   const { isConnected } = useAccount()
   const { isMounted } = useIsMounted()
