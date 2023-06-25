@@ -1,4 +1,4 @@
-import { Box, chakra, Link, Center, Image, Flex, Badge, Text, Button } from "@chakra-ui/react";
+import { Box, chakra, Flex, Button, Collapse } from "@chakra-ui/react";
 import { BriteEvent } from "../types/eventbrite";
 import { useState } from "react";
 import CreateLock from "./CreateLock";
@@ -20,14 +20,9 @@ export function EventCard({event} : {event: BriteEvent}) {
       justifyContent="center"
     >
       <Box bg="white" _dark={{bg: "gray.800"}}
-        mx={{
-          lg: 8,
-        }}
+        width="full"
         display={{
           lg: "flex",
-        }}
-        maxW={{
-          lg: "5xl",
         }}
         shadow={{
           lg: "lg",
@@ -91,26 +86,32 @@ export function EventCard({event} : {event: BriteEvent}) {
             { event.description }
           </chakra.p>
 
-          { showForm && <CreateLock event={event} />}
 
-          {!showForm && <Box mt={8}>
-            <Button
-              bg="gray.900"
-              color="gray.100"
-              px={5}
-              py={3}
-              fontWeight="semibold"
-              rounded="lg"
-              _hover={{
-                bg: "gray.700",
-              }}
-              onClick={() => {
-                setShowForm(!showForm)
-              }}
-            >
-              Create Token
-            </Button>
-          </Box>}
+          <Collapse startingHeight={0} in={showForm}>
+            <CreateLock event={event} />
+          </Collapse>
+
+          { !showForm && (
+            <Box mt={8}>
+              <Button
+                bg="gray.900"
+                color="gray.100"
+                px={5}
+                py={3}
+                fontWeight="semibold"
+                rounded="lg"
+                _hover={{
+                  bg: "gray.700",
+                }}
+                onClick={() => {
+                  setShowForm(!showForm)
+                }}
+              >
+                Create Payment
+              </Button>
+            </Box>
+          )}
+
         </Box>
       </Box>
     </Flex>

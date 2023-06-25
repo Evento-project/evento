@@ -5,10 +5,10 @@ import {
   Alert,
   AlertIcon,
   Box,
-  Button, 
   chakra,
   Checkbox,
   Flex,
+  Image,
   Input,
   Text,
 } from "@chakra-ui/react";
@@ -23,6 +23,9 @@ import {
 import { BriteEvent } from '../types/eventbrite';
 import IDKit from './IDKit';
 import ActionButton from './ActionButton';
+import worldCoinLogo from '../public/worldcoin-logo.svg';
+import {buildUnlockLink} from '../services/unlock/unlock';
+import { buildTransform } from 'framer-motion';
 
 const lockInterface = new ethers.utils.Interface(PublicLockV11.abi)
 
@@ -35,7 +38,7 @@ export default function CreateLock({event} : {event: BriteEvent}) {
   const [name, setName] = useState(event.name)
   const [price, setPrice] = useState('1')
   const [duration, setDuration] = useState('30') // in days
-  const [supply, setSupply] = useState('10000')
+  const [supply, setSupply] = useState('100')
   const [currency, setCurrency] = useState('') // address of the ERC20. If 0x0, uses base currency
 
   const { data: decimals } = useContractRead({
@@ -83,7 +86,7 @@ export default function CreateLock({event} : {event: BriteEvent}) {
         as='b' 
         fontSize='xl'
         style={{marginTop: '24px', marginBottom: '15px', display: 'block'}}
-      >Deploy a new membership contract!</Text>
+      >Add crypto payment!</Text>
 
       <FormInput 
         label='Name' 
@@ -110,7 +113,7 @@ export default function CreateLock({event} : {event: BriteEvent}) {
         label="Currency" 
         value={currency} 
         onChange={setCurrency}
-        tips="Address of the ERC20 contract used as currency for purchases. Leave empty to use the chain's base currency"
+        tips="The token contract address as currency for payment. Leave empty to use the chain's base currency"
       />
 
       <FormInput  
@@ -123,8 +126,11 @@ export default function CreateLock({event} : {event: BriteEvent}) {
       <Checkbox
         checked={humanOnly}
         onChange={(e) => setHumanOnly(e.target.checked)}
+        mt={4}
       >
-        Human only
+        <Flex align="center" gap={3}>
+          Human only <Image src={worldCoinLogo.src} alt='WorldCoin' />
+        </Flex>
       </Checkbox>
 
 
@@ -149,12 +155,13 @@ export default function CreateLock({event} : {event: BriteEvent}) {
           { isError ? (
             <Alert status='error' rounded={8}>
               <AlertIcon />
-              Transaction Error! { transaction?.hash }
+              Transaction Failed! { transaction?.hash }
             </Alert>
           ) : (
             <Alert status='success' rounded={8}>
               <AlertIcon />
-              Success! Lock Deployed at {receipt?.logs[0].address}
+              Success! Payment deployed at {receipt?.logs[0].address}
+              View at: {buildUnlockLink(receipt?.logs[0].address,80001)}
             </Alert>
           )}
         </Box>

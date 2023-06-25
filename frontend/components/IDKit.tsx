@@ -30,10 +30,10 @@ export default function IDKit({
 				<IDKitWidget
 					action="my_action"
 					signal="my_signal"
-					walletConnectProjectId="a6513ebfdf8545aeb9134f5753ab2ef1"
+					walletConnectProjectId={process.env.WORLD_PROJECT_ID || ''}
 					autoClose
 					onSuccess={onSuccess}
-					app_id="app_e1699974cc7199c662b6543b93b624f8"
+					app_id={process.env.WORLD_APP_ID || ''}
 				/>
 				{!open && !opened && (
 					<ActionButton 

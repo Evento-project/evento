@@ -10,7 +10,6 @@ import {
   Flex,
   Icon
 } from '@chakra-ui/react'
-import { ethers, providers } from 'ethers'
 import type { NextPage } from 'next'
 import { useReducer } from 'react'
 import {
@@ -25,7 +24,7 @@ import YourContract from '../artifacts/contracts/YourContract.sol/YourContract.j
 import { Layout } from '../components/layout/Layout'
 import { useCheckLocalChain } from '../hooks/useCheckLocalChain'
 import { useIsMounted } from '../hooks/useIsMounted'
-import eventbriteIcon from '../public/eventbrite-icon.svg'
+import EventsImport from '../components/ImportEvents'
 
 /**
  * Constants & Helpers
@@ -130,11 +129,6 @@ const Home: NextPage = () => {
     },
   })
 
-  const eventBriteUri = `https://www.eventbrite.com/oauth/authorize?response_type=token&client_id=${process.env.EVENTBRITE_ID
-    }&redirect_uri=${encodeURI(
-      `${process.env.NEXT_AUTH_URL}/events`
-    )}`;
-
   if (!isMounted) {
     return null
   }
@@ -157,9 +151,7 @@ const Home: NextPage = () => {
            Get the Event ticket with Cryptos and start having personalized experiences at every stage of the life journey.  
            </chakra.p>  
            {address && <Box display="inline-flex" rounded="md" shadow="md">
-            <chakra.a  mt={2}  href={eventBriteUri}  display="inline-flex"  alignItems="center"  justifyContent="center"  px={5}  py={3}  border="solid transparent"  fontWeight="bold"  w="full"  rounded="md"  _light={{  color: "black",  }}  bg="brand.600"  _dark={{  bg: "brand.500",  }}  _hover={{  bg: "brand.700",  _dark: {  bg: "brand.600",  },  }}  > 
-             Import from Eventbrite  <Image width={6} height={6} src={eventbriteIcon.src} ml={2} alt='Event' />  
-            </chakra.a>  
+              <EventsImport />
           </Box>}  
          </Flex> 
       </SimpleGrid>

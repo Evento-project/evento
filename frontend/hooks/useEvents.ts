@@ -29,8 +29,8 @@ export default function useEvents(token?: string){
                     const ebOrganizationUrl = "https://www.eventbriteapi.com/v3/users/me/organizations/"
                     const organizations: any = await axios.get(ebOrganizationUrl, header);
                     const data = organizations.data.organizations
-                    const events = await Promise.all(data.map((item: any) => {
-                        return getEventForOrganizations(token, item.id)
+                    const events = await Promise.all(data.map(async (item: any) => {
+                        return (await getEventForOrganizations(token, item.id))
                     }))
                     const resultData = events.flat().map((ev) => ({
                         name: ev.name.text,
@@ -40,7 +40,7 @@ export default function useEvents(token?: string){
                         start: ev.start.local,
                         end: ev.end.local,
                         timezone: ev.start.timezone,
-                        address: ev.venue.address,
+                        address: ev.venue?.address ?? '',
                     }))
                     setData(resultData)
                 }catch(err) {
