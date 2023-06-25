@@ -10,13 +10,12 @@ cd frontend
 yarn
 cp .env.local .env # dont forget to edit your environment keys
 yarn run dev
-
+```
 # Stack
 Unlock Protocol
 World ID
 Subgraph
 Eventbrite
-
 
 # Description
 This project is a simple widget-like presence that links offline events and cryptocurrency payments through the Unlock Protocol. You first log in with your Web3 wallet and then on the main page, there is a button that allows you to directly open your Eventbrite account for authorization. After returning to the Evy application interface, you will see your event information and a button on the information card to generate a unique cryptocurrency payment method for this event. After few clicks to fill out the blockchain payment info, your web3 wallet is called for signature authentication, and the payment channel information is recorded on the blockchain. A payment link is also generated, so the user can enter the beautiful checkout page created by the Unlock Protocol with just one click.
