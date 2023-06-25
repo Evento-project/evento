@@ -24,7 +24,7 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
           >
             <Flex py={[3, null, null, 0]}>
               <NextLink href="/" passHref legacyBehavior>
-                <Link px="4" py="1" fontSize={40} backgroundColor={"yellow.100"} fontWeight="bold" >
+                <Link px="4" py="1" fontSize={70} backgroundColor={"yellow.100"} fontWeight="bold" >
                   Evy
                 </Link>
               </NextLink>
