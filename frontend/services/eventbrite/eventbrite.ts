@@ -26,6 +26,7 @@ const addLinkToEvent = async function (token: string, eventId: string, network: 
   const data = events.data
   const url = `https://app.unlock-protocol.com/demo?network=${network}&lock=${lock}`
   const updater = await axios.post(ebEventUrl, {"event.summary": data.summary.concat(`Crypto: ${url}`)}, header )
+  return updater
 }
 
 export { getUserEvents, getEventForOrganizations, addLinkToEvent};

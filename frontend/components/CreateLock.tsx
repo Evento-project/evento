@@ -161,7 +161,7 @@ export default function CreateLock({event} : {event: BriteEvent}) {
             <Alert status='success' rounded={8}>
               <AlertIcon />
               Success! Payment deployed at {receipt?.logs[0].address}
-              View at: {buildUnlockLink(receipt?.logs[0].address,80001)}
+              View at: {buildUnlockLink(receipt?.logs[0].address || '',80001)}
             </Alert>
           )}
         </Box>
