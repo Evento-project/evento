@@ -3,6 +3,7 @@ import {
   connectorsForWallets,
   darkTheme,
   getDefaultWallets,
+  lightTheme,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -32,12 +33,12 @@ const { chains, provider, webSocketProvider } = configureChains(
 )
 
 const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'Evy',
   chains,
 })
 
 const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
+  appName: 'Evy',
 }
 
 const connectors = connectorsForWallets(wallets)
@@ -55,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <RainbowKitProvider
         appInfo={demoAppInfo}
         chains={chains}
-        theme={darkTheme({
+        theme={lightTheme({
           borderRadius: 'small',
         })}
       >

@@ -24,22 +24,17 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
           >
             <Flex py={[4, null, null, 0]}>
               <NextLink href="/" passHref legacyBehavior>
-                <Link px="4" py="1">
-                  Home
-                </Link>
-              </NextLink>
-              <NextLink href="/nft" passHref legacyBehavior>
-                <Link px="4" py="1">
-                  Mint NFT
+                <Link px="4" py="1" fontWeight="bold" >
+                  Evy
                 </Link>
               </NextLink>
               <NextLink href="/token-gated" passHref legacyBehavior>
-                <Link px="4" py="1">
+                <Link px="4" py="1" fontWeight="bold" >
                   Token Gated
                 </Link>
               </NextLink>
               <NextLink href="/events" passHref legacyBehavior>
-                <Link px="4" py="1">
+                <Link px="4" py="1" fontWeight="bold" >
                   Events
                 </Link>
               </NextLink>
@@ -59,7 +54,6 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
       </main>
       <footer>
         <Container mt="8" py="8" maxWidth="container.xl">
-          <LocalFaucetButton />
         </Container>
       </footer>
     </>
