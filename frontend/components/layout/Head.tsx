@@ -26,7 +26,7 @@ export const Head = ({
 }): JSX.Element => {
   const router = useRouter()
   const meta: MetaProps = {
-    title: 'Evyr',
+    title: 'Evy',
     description: 'Bring Cryptos Communities and Event',
     image: `${WEBSITE_HOST_URL}/images/site-preview.png`,
     type: 'website',
