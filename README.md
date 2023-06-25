@@ -1,6 +1,21 @@
 # Evy
 
+# Install
+```
+yarn
+```
+For front-end app
+```
+cd frontend
+yarn
+cp .env.local .env # dont forget to edit your environment keys
+yarn run dev
 
+# Stack
+Unlock Protocol
+World ID
+Subgraph
+Eventbrite
 
 
 # Description
