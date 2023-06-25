@@ -1,7 +1,14 @@
-import * as React from 'react'
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers'
 import { UnlockV11, PublicLockV11 } from "@unlock-protocol/contracts";
-import { Box, Button, chakra, Link, Center, Image, Flex, Badge, Text } from "@chakra-ui/react";
+import { 
+  Box,
+  Button, 
+  chakra,
+  Flex,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 
 import {
   erc20ABI,
@@ -15,15 +22,15 @@ import {
 const lockInterface = new ethers.utils.Interface(PublicLockV11.abi)
 
 
-export function CreateLock(eventBrite) {
+export default function CreateLock() {
   const { address: creator, isConnected } = useAccount()
 
-  const [calldata, setCalldata] = React.useState('')
-  const [name, setName] = React.useState('My Membership')
-  const [price, setPrice] = React.useState(1)
-  const [duration, setDuration] = React.useState(30) // in days
-  const [supply, setSupply] = React.useState(10000)
-  const [currency, setCurrency] = React.useState('') // address of the ERC20. If 0x0, uses base currency
+  const [calldata, setCalldata] = useState('')
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('1')
+  const [duration, setDuration] = useState('30') // in days
+  const [supply, setSupply] = useState('10000')
+  const [currency, setCurrency] = useState('') // address of the ERC20. If 0x0, uses base currency
 
   const { data: decimals } = useContractRead({
     address: currency,
@@ -33,13 +40,13 @@ export function CreateLock(eventBrite) {
   })
 
 
-  React.useEffect(() => {
+  useEffect(() => {
     const prepareCalldata = async () => {
       setCalldata(lockInterface.encodeFunctionData(
         'initialize(address,uint256,address,uint256,uint256,string)',
         [
           creator,
-          duration * 60 * 60 * 24, // duration is in days!
+          parseInt(duration) * 60 * 60 * 24, // duration is in days!
           currency || ethers.constants.AddressZero,
           ethers.utils.parseUnits(price.toString(), decimals || 18),
           supply,
@@ -63,11 +70,6 @@ export function CreateLock(eventBrite) {
     hash: transaction?.hash,
   })
 
-
-  if (isLoading) return <div>Processing… <br /> {transaction?.hash}</div>
-  if (isError) return <div>Transaction error!</div>
-  if (isSuccess) return <div>Success! <br />Lock Deployed at {receipt?.logs[0].address}</div>
-
   return (
     <chakra.form
       className='w-1/2'
@@ -77,68 +79,105 @@ export function CreateLock(eventBrite) {
       }}
     >
 
-      <p className='block text-left'>Deploy a new membership contract!</p>
+      <Text 
+        as='b' 
+        fontSize='xl'
+        style={{marginTop: '24px', marginBottom: '15px', display: 'block'}}
+      >Deploy a new membership contract!</Text>
 
-      <div className="mb-6">
-        <label className="text-base	block text-left">Name:</label>
-        <input
-          aria-label="Name"
-          className='text-base px-4 py-3 w-full rounded text-black text-base'
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-      </div>
+      <FormInput 
+        label='Name' 
+        value={name} 
+        onChange={setName}
+        placeholder='Event Name'
+      />
 
-      <div className="mb-6">
-        <label className="text-base	block text-left">Duration (days):</label>
-        <input
-          aria-label="Duration"
-          className='text-base px-4 py-3 w-full rounded text-black text-base'
-          onChange={(e) => setDuration(e.target.value)}
-          type="number"
-          value={duration}
-        />
-      </div>
+      <FormInput 
+        label='Duration(days)' 
+        value={duration} 
+        onChange={setDuration}
+        type='number'
+      />
 
-      <div className="mb-6">
-        <label className="text-base	block text-left">Supply:</label>
-        <input
-          aria-label="Supply"
-          className='text-base px-4 py-3 w-full rounded text-black text-base'
-          onChange={(e) => setSupply(e.target.value)}
-          type="number"
-          value={supply}
-        />
-      </div>
+      <FormInput 
+        label='Supply' 
+        value={supply} 
+        onChange={setSupply}
+        type='number'
+      />
 
-      <div className="mb-6">
-        <label className="text-base	block text-left">Currency (address of the ERC20 contract used as currency for purchases. Leave empty to use the chain's base currency):</label>
-        <input
-          aria-label="Currency"
-          className='text-base px-4 py-3 w-full rounded text-black text-base'
-          onChange={(e) => setCurrency(e.target.value)}
-          type="text"
-          value={currency}
-        />
-      </div>
+      <FormInput 
+        label="Currency" 
+        value={currency} 
+        onChange={setCurrency}
+        tips="Address of the ERC20 contract used as currency for purchases. Leave empty to use the chain's base currency"
+      />
 
-      <div className="mb-6">
-        <label className="text-base block text-left">Price:</label>
-        <input
-          aria-label="Price"
-          className='text-base px-4 py-3 w-full rounded text-black text-base'
-          onChange={(e) => setPrice(e.target.value)}
-          type="number"
-          value={price}
-        />
-      </div>
+      <FormInput  
+        label='Price' 
+        value={price} 
+        onChange={setPrice}
+        type='number'
+      />
 
-      <Button type="submit" disabled={isLoading} className="block w-full mt-8 px-4 py-3 text-white text-base bg-blue-700 hover:bg-blue-800 focus:outline-none rounded-lg text-center">
-        Send
-      </Button>
+      <Box mt={8} textAlign="center">
+        <Button 
+          bg="gray.900"
+          color="gray.100"
+          _hover={{
+            bg: "gray.700",
+          }}
+          type="submit" 
+          disabled={isLoading || !sendTransaction} 
+          width="240px"
+          onClick={() => { sendTransaction!() }}
+        >
+          Deploy
+        </Button>
+      </Box>
+
+      {(isError || isSuccess) && (
+        <Box mt={2} textAlign="center">
+          { isError ? 'Transaction error!' : `Success! Lock Deployed at ${receipt?.logs[0].address}`}
+        </Box>
+      )}
+
     </chakra.form>
   )
 }
 
 
-export default CreateLock
+function FormInput({
+  label,
+  value,
+  placeholder = '',
+  onChange,
+  type = 'text',
+  tips,
+} : {
+  label: string,
+  value: string,
+  placeholder?: string,
+  onChange: (val: string) => void,
+  type?: string,
+  tips?: string,
+}) {
+  return <Box mb={4}>
+    <Flex
+      w="full"
+      alignItems="center"
+      justifyContent="center"
+      gap="8px"
+    >
+        <Text as='b' style={{flex: 'none', width: '132px'}}>{label}</Text>
+        <Input
+          onChange={(e) => onChange(e.target.value)}
+          type={type}
+          value={value}
+          required
+          placeholder={placeholder}
+        />
+    </Flex>
+    { tips && <Text fontSize='sm' color='GrayText'>{tips}</Text>}
+  </Box>
+}

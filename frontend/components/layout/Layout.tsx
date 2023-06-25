@@ -20,11 +20,11 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
             columns={[1, 1, 1, 2]}
             alignItems="center"
             justifyContent="space-between"
-            py="12"
+            py="16"
           >
             <Flex py={[3, null, null, 0]}>
               <NextLink href="/" passHref legacyBehavior>
-                <Link px="4" py="1" fontWeight="bold" >
+                <Link px="4" py="1" fontSize={40} backgroundColor={"yellow.100"} fontWeight="bold" >
                   Evy
                 </Link>
               </NextLink>

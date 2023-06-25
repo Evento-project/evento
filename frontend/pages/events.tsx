@@ -25,26 +25,20 @@ import {
   useWaitForTransaction,
 } from 'wagmi'
 import { Layout } from '../components/layout/Layout'
-import { CreateLock} from '../components/CreateLock'
+import CreateLock from '../components/CreateLock'
 import { EventCard} from '../components/EventCard'
 import { IDKit} from '../components/IDKit'
 import { useCheckLocalChain } from '../hooks/useCheckLocalChain'
 import { useIsMounted } from '../hooks/useIsMounted'
-import { getUserEvents } from '../services/eventbrite/eventbrite'
+import useEvents from '../hooks/useEvents'
+import { BriteEvent } from '../types/eventbrite'
 
 const GOERLI_CONTRACT_ADDRESS = 123123123;
 
 const Events: NextPage = () => {
   const router = useRouter()
-  let token = router.asPath.split('access_token=')[1];
-  if (token) {
-   const events = getUserEvents(token)
-   console.log(events)
-    
-// Create configured Eventbrite SDK
-// When all request endpoints will be full URLs
-    
-  }
+  const token = router.asPath.split('access_token=')[1];
+  const { data, loading } = useEvents(token)
 
   const { address, isConnected } = useAccount()
 
@@ -67,14 +61,33 @@ const Events: NextPage = () => {
     )
   }
 
+  const testEvent: BriteEvent[] = [
+    {
+      "name": "The launch Party Celebration",
+      "image": "https://cdn.discordapp.com/attachments/933796379837497414/1073284030809784430/ticketing-image.png",
+      "description": "During this we will celebrate our launch as well as show more people how this all works!\nThis is powered by **NFT** using the [Unlock Protocol](https://unlock-protocol.com).",
+      "url": "https://www.eventbrite.ca/e/mito-launch-party-tickets-666032700737",
+      "start": "2023-06-25T19:00:00",
+      "end": "2023-06-26T03:00:00",
+      "timezone": "America/Toronto",
+      "address": "Toronto, ON"
+    }
+  ]
 
   return (
     <Layout>
-      <Heading as="h1" mb="8">
-      </Heading>
-        <EventCard></EventCard>
-        <CreateLock></CreateLock>
-        <IDKit></IDKit>
+      <Heading as="h1" mb="8" />
+        { data && (
+          <div className='events'>
+            { data.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
+          </div>
+        )}
+        { !data && (
+          <div className='events'>
+            { testEvent.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
+          </div>
+        )}
+        <IDKit />
     </Layout>
   )
 }
