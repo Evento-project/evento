@@ -27,7 +27,7 @@ export function CreateLock(eventBrite) {
 
   const { data: decimals } = useContractRead({
     address: currency,
-    contractInterface: erc20ABI,
+    abi: erc20ABI,
     functionName: 'decimals',
     enabled: currency !== ethers.constants.AddressZero
   })
@@ -53,7 +53,7 @@ export function CreateLock(eventBrite) {
 
   const { config } = usePrepareContractWrite({
     address: '0x627118a4fB747016911e5cDA82e2E77C531e8206',
-    contractInterface: UnlockV11.abi,
+    abi: UnlockV11.abi,
     functionName: 'createUpgradeableLockAtVersion',
     args: [calldata, 11] // We currently deploy version 11
   })
