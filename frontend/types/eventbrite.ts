@@ -14,15 +14,17 @@ export interface UnlockEvent extends CommonEvent {
 }
 
 export interface BriteEvent extends CommonEvent {
+    id: string;
     url: string;
     start: string;
-    end: string;
+    end?: string;
     timezone: string;
-    address: string;
+    address?: string;
 }
 
 export const testEvents: BriteEvent[] = [
     {
+      "id": "666032700737",
       "name": "The launch Party Celebration",
       "image": "https://cdn.discordapp.com/attachments/933796379837497414/1073284030809784430/ticketing-image.png",
       "description": "During this we will celebrate our launch as well as show more people how this all works!\nThis is powered by **NFT** using the [Unlock Protocol](https://unlock-protocol.com).",

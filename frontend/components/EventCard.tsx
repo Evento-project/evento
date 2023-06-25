@@ -1,24 +1,44 @@
-import { Box, chakra, Flex, Button, Collapse } from "@chakra-ui/react";
+import { Box, chakra, Text, Button, Collapse, Flex } from "@chakra-ui/react";
 import { BriteEvent } from "../types/eventbrite";
 import { useState } from "react";
 import CreateLock from "./CreateLock";
 
-export function EventCard({event} : {event: BriteEvent}) {
+export function EventCard({
+  event,
+  deployed,
+} : {
+  event: BriteEvent,
+  deployed: string[],
+}) {
 
   const [showForm, setShowForm] = useState(false)
 
-
   return (
-    <Flex
+    <Box
       bg="#edf3f8"
       _dark={{
         bg: "#3e3e3e",
       }}
       p={50}
       w="full"
-      alignItems="center"
-      justifyContent="center"
+      position="relative"
     >
+
+      {(deployed.indexOf(event.id) > -1) && (
+        <Box 
+          pos="absolute" 
+          right={12} 
+          bg="green.400" 
+          color="white"
+          py={2}
+          px={4}
+          rounded="sm"
+          fontSize="sm"
+        >
+          Deployed
+        </Box>
+      )}
+
       <Box bg="white" _dark={{bg: "gray.800"}}
         width="full"
         display={{
@@ -77,7 +97,7 @@ export function EventCard({event} : {event: BriteEvent}) {
             { event.name }
           </chakra.h2>
           <chakra.p
-            mt={4}
+            my={4}
             color="gray.600"
             _dark={{
               color: "gray.400",
@@ -86,36 +106,63 @@ export function EventCard({event} : {event: BriteEvent}) {
             { event.description }
           </chakra.p>
 
+          <CardInfo title="Start Date" value={(new Date(event.start)).toLocaleString()} />
+          {event.end && <CardInfo title="End Date" value={(new Date(event.end)).toLocaleString()} />}
+          {event.address && <CardInfo title="Location" value={event.address} />}
 
-          <Collapse startingHeight={0} in={showForm}>
-            <CreateLock event={event} />
-          </Collapse>
-
-          { !showForm && (
-            <Box mt={8}>
-              <Button
-                bg="gray.900"
-                color="gray.100"
-                px={5}
-                py={3}
-                fontWeight="semibold"
-                rounded="lg"
-                _hover={{
-                  bg: "gray.700",
-                }}
-                onClick={() => {
-                  setShowForm(!showForm)
-                }}
-              >
-                Create Payment
-              </Button>
-            </Box>
-          )}
+          <Box mt={8}>
+            <Button
+              bg={showForm ? "gray.200" : "gray.900"}
+              color={showForm ? "gray.800" : "gray.100"}
+              px={5}
+              py={3}
+              fontWeight="semibold"
+              rounded="lg"
+              _hover={{
+                bg: showForm ? "gray.300" : "gray.700",
+              }}
+              onClick={() => {
+                setShowForm(!showForm)
+              }}
+            >
+              { showForm ? 'Cancel' : 'Create Payment'}
+            </Button>
+          </Box>
 
         </Box>
       </Box>
-    </Flex>
+      
+      <Collapse 
+        startingHeight={0} 
+        in={showForm}
+      >
+        <CreateLock event={event} />
+      </Collapse>
+
+
+    </Box>
     );
+}
+
+function CardInfo({
+  title,
+  value,
+} : {
+  title: string,
+  value: string,
+}) {
+  return (
+    <Flex 
+      mb={1} 
+      align="center" 
+      gap={2}
+      fontSize="sm"
+      fontWeight="semibold"
+      color="gray.500"
+    >
+      <Text>{title}: </Text> <Text>{value}</Text>
+    </Flex>
+  )
 }
 
 export default EventCard

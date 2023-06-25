@@ -33,6 +33,7 @@ export default function useEvents(token?: string){
                         return (await getEventForOrganizations(token, item.id))
                     }))
                     const resultData = events.flat().map((ev) => ({
+                        id: ev.id,
                         name: ev.name.text,
                         image: ev.logo.url,
                         description: ev.summary,

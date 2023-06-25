@@ -17,15 +17,16 @@ import { useIsMounted } from '../hooks/useIsMounted'
 import useEvents from '../hooks/useEvents'
 import { BriteEvent, testEvents } from '../types/eventbrite'
 import EventsImport from '../components/ImportEvents'
+import useLocalStorage from '../hooks/useLocalStorage'
 
 const Events: NextPage = () => {
   const router = useRouter()
   const token = router.asPath.split('access_token=')[1];
-  const { data, loading, error } = useEvents(token)
+  const { data, loading, error } = useEvents('DDD')
 
   const { isConnected } = useAccount()
-
   const { isMounted } = useIsMounted()
+  const [allIds, setAllIds] = useLocalStorage('ids', []);
 
   if (!isMounted) {
     return null
@@ -56,7 +57,7 @@ const Events: NextPage = () => {
         )}
         { Boolean(error) && (
           <div className='events'>
-            { testEvents.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
+            { testEvents.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} deployed={allIds} />) }
           </div>
         )}
         {data && data.length == 0 && (
@@ -64,7 +65,7 @@ const Events: NextPage = () => {
         )}
         { data && data.length > 0 && (
           <div className='events'>
-            { data.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} />) }
+            { data.map((ev: BriteEvent) => <EventCard key={ev.name} event={ev} deployed={allIds} />) }
           </div>
         )}
     </Layout>

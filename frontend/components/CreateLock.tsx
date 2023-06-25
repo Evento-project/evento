@@ -25,19 +25,31 @@ import IDKit from './IDKit';
 import ActionButton from './ActionButton';
 import worldCoinLogo from '../public/worldcoin-logo.svg';
 import {buildUnlockLink} from '../services/unlock/unlock';
-import { buildTransform } from 'framer-motion';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const lockInterface = new ethers.utils.Interface(PublicLockV11.abi)
 
 
 export default function CreateLock({event} : {event: BriteEvent}) {
+
+  const start = new Date(event.start);
+  const end = event.end ? new Date(event.end) : 0;
+
+  let eventDuration = 1;
+  if (end) {
+    const diff = (end.getTime() - start.getTime()) / 1000 / 60 / 60 / 24
+    eventDuration = Math.ceil(diff);
+  }
+
+
   const { address: creator, isConnected } = useAccount()
+  const [allIds, setAllIds] = useLocalStorage('ids', []);
 
   const [calldata, setCalldata] = useState('')
   const [humanOnly, setHumanOnly] = useState(false)
   const [name, setName] = useState(event.name)
   const [price, setPrice] = useState('1')
-  const [duration, setDuration] = useState('30') // in days
+  const [duration, setDuration] = useState(eventDuration.toString()) // in days
   const [supply, setSupply] = useState('100')
   const [currency, setCurrency] = useState('') // address of the ERC20. If 0x0, uses base currency
 
@@ -79,14 +91,24 @@ export default function CreateLock({event} : {event: BriteEvent}) {
     hash: transaction?.hash,
   })
 
-  return (
-    <chakra.form>
 
-      <Text 
-        as='b' 
-        fontSize='xl'
-        style={{marginTop: '24px', marginBottom: '15px', display: 'block'}}
-      >Add crypto payment!</Text>
+  useEffect(() => {
+    if (isSuccess) {
+      setAllIds([...allIds, event.id])
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, allIds])
+
+  return (
+    <chakra.form bg="white" px="20%" pt={12} pb={20}>
+
+      <Box 
+        my={12}
+        fontSize='2xl'
+        fontWeight='bold'
+      >
+        Add crypto payment!
+      </Box>
 
       <FormInput 
         label='Name' 
@@ -126,10 +148,12 @@ export default function CreateLock({event} : {event: BriteEvent}) {
       <Checkbox
         checked={humanOnly}
         onChange={(e) => setHumanOnly(e.target.checked)}
-        mt={4}
+        mt={12}
+        size='lg' 
+        colorScheme='green'
       >
         <Flex align="center" gap={3}>
-          Human only <Image src={worldCoinLogo.src} alt='WorldCoin' />
+          <strong>Human only</strong> <Image src={worldCoinLogo.src} alt='WorldCoin' />
         </Flex>
       </Checkbox>
 
@@ -160,8 +184,10 @@ export default function CreateLock({event} : {event: BriteEvent}) {
           ) : (
             <Alert status='success' rounded={8}>
               <AlertIcon />
-              Success! Payment deployed at {receipt?.logs[0].address}
-              View at: {buildUnlockLink(receipt?.logs[0].address || '',80001)}
+              Success! View at: 
+              <a href={buildUnlockLink(receipt?.logs[0].address || '', 80001)}>
+                {receipt?.logs[0].address}
+              </a>
             </Alert>
           )}
         </Box>
@@ -187,7 +213,7 @@ function FormInput({
   type?: string,
   tips?: string,
 }) {
-  return <Box mb={4}>
+  return <Box mb={8}>
     <Flex
       w="full"
       alignItems="center"
